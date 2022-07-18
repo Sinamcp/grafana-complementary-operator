@@ -138,7 +138,7 @@ func (r *GrafanaUserReconciler) AddUsersToGrafanaOrgByEmail(ctx context.Context,
 					if err != nil {
 						log.Error(err, "Failed to add", User.Name, "to", orgName)
 					} else {
-						log.Info(User.Name, "is added to", orgName)
+						log.Info(UserEmail, "is added to", orgName)
 					}
 					break
 				}

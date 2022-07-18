@@ -148,6 +148,7 @@ func (r *GrafanaUserReconciler) AddUsersToGrafanaOrgByEmail(ctx context.Context,
 	return ctrl.Result{}, nil
 }
 
+//test
 // SetupWithManager sets up the controller with the Manager.
 func (r *GrafanaUserReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).

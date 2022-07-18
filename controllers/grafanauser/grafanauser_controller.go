@@ -19,6 +19,7 @@ package grafanauser
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -37,9 +38,9 @@ const (
 )
 
 // Get Grafana URL and PassWord as a env.
-var grafanaPassword = "xAR6WJKrszFBJsnlHCdoeuA2w2Q10y9E7iJ3J46l3Vpk1yigQl"
-var grafanaUsername = "admin"
-var grafanaURL = "https://grafana.okd4.teh-1.snappcloud.io"
+var grafanaPassword = os.Getenv("GRAFANA_PASSWORD")
+var grafanaUsername = os.Getenv("GRAFANA_USERNAME")
+var grafanaURL = os.Getenv("GRAFANA_URL")
 
 // GrafanaReconciler reconciles a Grafana object
 type GrafanaUserReconciler struct {

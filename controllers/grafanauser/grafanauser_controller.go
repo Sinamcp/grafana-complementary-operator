@@ -89,8 +89,8 @@ func (r *GrafanaUserReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 
 	r.AddUsersToGrafanaOrgByEmail(ctx, req, grafana.Spec.Admin, "admin")
-	//r.AddUsersToGrafanaOrgByEmail(ctx, req, grafana.Spec.Edit.Emails, "editor")
-	//r.AddUsersToGrafanaOrgByEmail(ctx, req, grafana.Spec.View.Emails, "viewer")
+	r.AddUsersToGrafanaOrgByEmail(ctx, req, grafana.Spec.Edit, "editor")
+	r.AddUsersToGrafanaOrgByEmail(ctx, req, grafana.Spec.View, "viewer")
 
 	return ctrl.Result{}, nil
 }
@@ -109,6 +109,7 @@ func (r *GrafanaUserReconciler) AddUsersToGrafanaOrgByEmail(ctx context.Context,
 	client, err1 := sdk.NewClient(grafanaURL, fmt.Sprintf("%s:%s", grafanaUsername, grafanaPassword), sdk.DefaultHTTPClient)
 	retrievedOrg, _ := client.GetOrgByOrgName(ctx, org)
 	orgID := retrievedOrg.ID
+	orgName := retrievedOrg.Name
 	getallUser, _ := client.GetAllUsers(ctx)
 	getuserOrg, _ := client.GetOrgUsers(ctx, orgID)
 	if err1 != nil {
@@ -122,23 +123,22 @@ func (r *GrafanaUserReconciler) AddUsersToGrafanaOrgByEmail(ctx context.Context,
 				UserOrg := orguser.Email
 				if email == UserOrg {
 					orguserfound = true
-					reqLogger.Info("users already in")
+					reqLogger.Info(orguser.Email, "is already in", orgName)
 					break
 				}
 			}
 			if orguserfound {
 				continue
 			}
-			for _, user := range getallUser {
-				UserEmail := user.Email
+			for _, User := range getallUser {
+				UserEmail := User.Email
 				if email == UserEmail {
-					reqLogger.Info("user is exist")
 					newuser := sdk.UserRole{LoginOrEmail: email, Role: role}
 					_, err := client.AddOrgUser(ctx, newuser, orgID)
 					if err != nil {
-						log.Error(err, "Failed to add user to  organization")
+						log.Error(err, "Failed to add", User.Name, "to", orgName)
 					} else {
-						log.Info("ok")
+						log.Info(User.Name, "is added to", orgName)
 					}
 					break
 				}
